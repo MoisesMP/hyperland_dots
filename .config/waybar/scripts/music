@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if ! playerctl metadata &>/dev/null; then
+  echo "No player found"
+  exit 1
+elif [ "$(playerctl status)" = "Playing" ]; then
+  playerctl metadata --format "{{ artist }} - {{ title }}" | zscroll -l 31 -d 0.1 -p "  " \
+    -M "playerctl status" \
+    -m "Playing" "-b ' '" \
+    -m "Paused" "-b ' ' -s 0" \
+    -u t "playerctl metadata --format '{{ artist }} - {{ title }}'"
+else
+  echo " Not playing"
+fi
+
+# Block until an event is emitted
+playerctl metadata --follow &>/dev/null
